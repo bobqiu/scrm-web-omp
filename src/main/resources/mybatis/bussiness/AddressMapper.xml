@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AddressMapper">
+    
+    <!-- 查询省份 -->
+	<select id="selectProvinceList" resultType="PageData">
+		select id,name from
+		geog_province
+	</select>
+	
+	<!-- 根据省份ID查询城市列表 -->
+	<select id="selectCityList" parameterType="PageData" resultType="PageData">
+		select id,name from
+		geog_city 
+		<where>
+			 <if test="provinceId != null and provinceId != ''">
+				and province_id=#{provinceId}
+			</if> 
+		</where>
+	</select>
+	
+	<!-- 根据城市ID查询地区列表 -->
+	<select id="selectAreaList" parameterType="PageData" resultType="PageData">
+		select id,name from geog_area 
+		 <where>
+			<if test="cityId != null and cityId != ''">
+				and city_id=#{cityId}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 根据省份ID查询城市总数 -->
+	<select id="cityListCount" parameterType="PageData" resultType="int">
+		select count(1) from geog_city where province_id=#{provinceId}
+	</select>
+	
+	<!-- 根据省份ID查询城市列表分页 -->
+	<select id="cityListPage" parameterType="PageData" resultType="PageData">
+		select id,name from
+		geog_city where province_id=#{provinceId}
+		limit #{from},#{size}
+	</select>
+	
+	<!-- 根据省ID查询省信息 -->
+	<select id="getProvinceDataById" parameterType="PageData" resultType="PageData">
+		select * from geog_province 
+		 where 1=1
+		<if test="provinceId != null and provinceId != ''">
+			and id=#{provinceId}
+		</if>
+	</select>
+	<!-- 根据城市ID查询地区城市信息 -->
+	<select id="getCityDataById" parameterType="PageData" resultType="PageData">
+		select * from geog_city 
+		 <where>
+		     <if test="cityId != null and cityId != ''">
+				and id=#{cityId}
+			</if>
+		 </where>
+	</select>
+	<!-- 根据地区ID查询地区信息 -->
+	<select id="getAreaDataById" parameterType="PageData" resultType="PageData">
+		select * from geog_area 
+		<where>
+		    <if test="areaId != null and areaId != ''">
+				and id=#{areaId}
+			</if>
+		</where>
+	</select>
+</mapper>

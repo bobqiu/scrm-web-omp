@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="WorkingMachineMapper">
+	<sql id="device">
+	id,
+	imei,
+	org_id orgId,
+	wechat_id wechatId,
+	device_status deviceStatus,
+	wechat_status wechatStatus,
+	activation_time activeTime
+	</sql>
+	<select id="getDevices" parameterType="PageData" resultType="PageData" useCache="false">
+		select <include refid="device"/>
+		from working_machine
+		where 
+		is_delete = 1
+		<if test="deviceStatus != null and deviceStatus != ''">
+		and device_status= #{deviceStatus} 
+		</if>
+		<if test="imei != null and imei != ''">
+		and imei like "%"#{imei}"%" 
+		</if>
+		LIMIT #{from},#{size}
+	</select>
+	
+	<select id="count" parameterType="PageData" resultType="java.lang.Long" useCache="false">
+		SELECT count(id) FROM working_machine 
+		where 
+		is_delete = 1
+		<if test="deviceStatus != null and deviceStatus != ''">
+		and device_status= #{deviceStatus} 
+		</if>
+		<if test="imei != null and imei != ''">
+		and imei like "%"#{imei}"%" 
+		</if>
+	</select>
+	
+</mapper>

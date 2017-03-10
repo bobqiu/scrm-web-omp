@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+	<!-- 权限的dubbo接口服务 -->
+
+	<!--权限service-->
+	<dubbo:reference id="permissionInfoService"
+		interface="com.youanmi.scrm.api.auth.service.permission.IPermissionInfoService"
+		version="1.0.0" group="${auth.dubbo.group}" check="false" />
+	
+	<!--岗位角色service-->
+	<dubbo:reference id="postRoleService"
+		interface="com.youanmi.scrm.api.auth.service.permission.IPostRoleService"
+		version="1.0.0" group="${auth.dubbo.group}" check="false" />
+	
+	<!--角色service-->
+	<dubbo:reference id="roleInfoService"
+		interface="com.youanmi.scrm.api.auth.service.permission.IRoleInfoService"
+		version="1.0.0" group="${auth.dubbo.group}" check="false" />
+	
+	<!--角色权限service-->
+	<dubbo:reference id="rolePermissionService"
+		interface="com.youanmi.scrm.api.auth.service.permission.IRolePermissionService"
+		version="1.0.0" group="${auth.dubbo.group}" check="false" />
+
+</beans>

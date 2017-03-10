@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MenuMapper">
+
+	<resultMap type="Menu" id="menuResultMap">
+		<id column="menu_id" property="menuId" />
+		<result column="menu_name" property="menuName" />
+		<result column="menu_url" property="menuUrl" />
+		<result column="parent_id" property="parentId" />
+		<result column="menu_order" property="menuOrder" />
+		<result column="menu_icon" property="menuIcon" />
+		<result column="menu_type" property="menuType" />
+	</resultMap>
+
+	<!-- ztree -->
+	<!-- <resultMap type="Menu" id="menuZtreeResultMap">
+		<id column="menu_id" property="menuId" />
+		<result column="menu_name" property="menuName" />
+		<result column="menu_url" property="menuUrl" />
+		<result column="parent_id" property="parentId" />
+		<result column="menu_order" property="menuOrder" />
+		<result column="menu_icon" property="menuIcon" />
+		<result column="menu_type" property="menuType" />
+		<result column="target" property="target"></result>
+	</resultMap> -->
+	
+	<!-- <resultMap type="Button" id="buttonResultMap">
+		<id column="button_id" property="buttonId" />
+		<result column="button_name" property="buttonName" />
+		<result column="button_url" property="buttonUrl" />
+		<result column="status" property="status" />
+	</resultMap> -->
+	
+	<!-- yang -->
+	<select id="MenuMapper.findParentMenusByUserId" parameterType="java.util.Map" resultType="Menu">
+
+		select sm.*,sm.menu_id as  oneLevelId from sys_user su
+		join sys_user_role sur on sur.user_id=su.user_id
+		and su.user_id = #{userId}
+		join sys_role sr on sr.role_id=sur.role_id
+		join sys_role_resource srr on srr.role_id=sr.role_id  and srr.resource_type!=3
+		join sys_menu sm on srr.resource_id=sm.menu_id
+		and sm.parent_id=#{parentId}
+		and sm.status != -1
+		order by sm.menu_order
+	</select>
+
+	<!-- yang
+	<select id="MenuMapper.findMenusByUserIdAndTwoParent" resultType="Menu">
+		select sm.*,sm.parent_id as  oneLevelId from sys_user su
+		join sys_user_role sur on sur.user_id=su.user_id
+		and su.user_id = #{userId}
+		join sys_role sr on sr.role_id=sur.role_id
+		join sys_role_resource srr on srr.role_id=sr.role_id  and srr.resource_type!=3
+		join sys_menu sm on srr.resource_id=sm.menu_id  and sm.parent_id=#{menuId} and sm.status != -1
+		order by sm.menu_order
+
+	</select>
+
+	<select id="MenuMapper.findMenusByUserIdAndThreeParent" resultType="Menu">
+		select distinct m.*
+		from sys_user_role ur, sys_role_resource rs, (select m3.*,m1.menu_id as oneLevelId from sys_menu m1,sys_menu m2,sys_menu m3  where m1.parent_id=0 and m2.parent_id=m1.menu_id and m3.parent_id=m2.menu_id) m
+		where ur.role_id = rs.role_id
+		and rs.resource_id = m.menu_id
+		and m.parent_id = #{menuId}
+		and m.status != -1
+		<if test="userId != 1">
+			and ur.user_id = #{userId}
+		</if>
+		order by m.menu_order
+	</select>-->
+
+
+	<select id="count" parameterType="PageData" resultType="int">
+		select count(1)
+		from sys_menu m
+		where m.status != -1
+		<if test="menuType != null">
+	  	and	m.menu_type = #{menuType}
+		</if>
+		<if test="parentId != null">
+	  	and	m.parent_id = #{parentId}
+		</if>
+		<if test="menuName != null and menuName != ''">
+	  	and	m.menu_name like "%"#{menuName}"%"
+		</if>
+	</select>
+	
+	<select id="list" parameterType="PageData" resultType="PageData">
+		select  m.menu_id menuId,
+				m.menu_name menuName,
+				m.menu_url menuUrl,
+				m.parent_id parentId,
+				m.menu_order menuOrder,
+				m.menu_type menuType,
+				m.removable,
+				m.description,
+				m.status
+		from sys_menu m
+		where m.status != -1
+		<if test="menuType != null">
+	  	and	m.menu_type = #{menuType}
+		</if>
+		<if test="parentId != null">
+	  	and	m.parent_id = #{parentId}
+		</if>
+		<if test="menuName != null and menuName != ''">
+	  	and	m.menu_name like "%"#{menuName}"%"
+		</if>
+		limit #{from},#{size}
+	</select>
+	
+	<select id="listBy" parameterType="PageData" resultType="PageData">
+		select  m.menu_id menuId,
+				m.menu_name menuName,
+				m.menu_url menuUrl,
+				m.parent_id parentId,
+				m.menu_order menuOrder,
+				m.menu_type menuType,
+				m.removable,
+				m.description,
+				m.status
+		from sys_menu m
+		where m.status != -1
+		<if test="menuType != null">
+	  	and	m.menu_type = #{menuType}
+		</if>
+		<if test="parentId != null">
+	  	and	m.parent_id = #{parentId}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="PageData">
+		insert into sys_menu (
+			menu_name,
+			menu_url,
+			parent_id,
+			menu_order,
+			menu_type,
+			removable,
+			description,
+			status
+		) values (
+			#{menuName},
+			#{menuUrl},
+			#{parentId},
+			#{menuOrder},
+			#{menuType},
+			#{removable},
+			#{description},
+			#{status}
+		)
+	</insert>
+	
+	<select id="getById" parameterType="Integer" resultType="PageData">
+		select
+			menu_id menuId,
+			menu_name menuName,
+			menu_url menuUrl,
+			parent_id parentId,
+			menu_order menuOrder,
+			menu_type menuType,
+			removable,
+			description,
+			status
+		from sys_menu 
+		where status != -1
+		and menu_id = #{menuId}
+	</select>
+	
+	<update id="edit" parameterType="PageData">
+		update sys_menu set
+			menu_name	= #{menuName},
+			menu_url	= #{menuUrl},
+			menu_order	= #{menuOrder},
+			removable	= #{removable},
+			description	= #{description}
+		where
+			menu_id		= #{menuId}
+	</update>
+	
+	<update id="delete" parameterType="Integer">
+		update sys_menu set status = -1 where menu_id = #{menuId}
+	</update>
+	
+	<update id="deleteByParentId" parameterType="Integer">
+		update sys_menu set status = -1 where parent_id = #{menuId}
+	</update>
+	
+	<update id="deleteButtonByParentId" parameterType="Integer">
+		update sys_button set status = -1 where menu_id in
+		(select menu_id from sys_menu where parent_id = #{menuId})
+	</update>
+	
+	<update id="deleteButtonByMenuId" parameterType="Integer">
+		update sys_button set status = -1 where menu_id = #{menuId}
+	</update>
+	
+	<update id="batchDelete" parameterType="java.util.List">
+		update sys_menu set status = -1 where menu_id in
+		<foreach collection="list" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+	
+	<update id="batchDeleteByParentId" parameterType="java.util.List">
+		update sys_menu set status = -1 where parent_id in
+		<foreach collection="list" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+	
+	<update id="batchDeleteButtonByParentId" parameterType="java.util.List">
+		update sys_button set status = -1 where menu_id in
+		(select menu_id from sys_menu where parent_id in
+		<foreach collection="list" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>)
+	</update>
+	
+	<update id="batchDeleteButtonByMenuId" parameterType="java.util.List">
+		update sys_button set status = -1 where menu_id in
+		<foreach collection="list" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+	
+	<select id="listRoleNameByMenuId" parameterType="Integer" resultType="String">
+		select distinct r.role_name roleName
+		from sys_role_resource rr left join sys_role r on rr.role_id = r.role_id
+		where r.status != -1 and rr.resource_type != 3 and rr.resource_id = #{menuId}
+	</select>
+	
+	<select id="listRoleNameByMenuIds" parameterType="java.util.List" resultType="String">
+		select distinct r.role_name roleName
+		from sys_role_resource rr left join sys_role r on rr.role_id = r.role_id
+		where r.status != -1 and rr.resource_type != 3 and rr.resource_id in
+		<foreach collection="list" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+	
+	<select id="getByName" parameterType="PageData" resultType="PageData">
+		select
+			menu_id menuId,
+			menu_name menuName,
+			menu_url menuUrl,
+			parent_id parentId,
+			menu_order menuOrder,
+			menu_type menuType,
+			removable,
+			description,
+			status
+		from sys_menu 
+		where status != -1
+		and menu_name = #{menuName}
+	</select>
+	
+</mapper>

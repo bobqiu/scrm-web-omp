@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="RoleMapper">
+	
+	<resultMap type="Role" id="roleResultMap">
+		<id column="role_id" property="roleId"/>
+		<result column="role_name" property="roleName"/>
+		<result column="parent_id" property="parentId"/>
+		<result column="menu_rights" property="menuRights"/>
+		<result column="button_rights" property="buttonRights"/>
+	</resultMap>
+	
+	<!-- yang -->
+	<select id="findRolesIdByUserId" resultType="String">
+	  select distinct r.role_id
+		from sys_role r, sys_user_role ur, sys_user u
+		where r.role_id = ur.role_id 
+		and ur.user_id = u.user_id
+		and u.user_id=#{userId}
+	</select>
+	
+	<select id="count" parameterType="PageData" resultType="int">
+		select count(1)
+		from sys_role r
+		where r.status != -1
+		<if test="roleName != null and roleName != ''">
+	  	and	r.role_name like "%"#{roleName}"%"
+		</if>
+	</select>
+	
+	<select id="list" parameterType="PageData" resultType="PageData">
+		select  r.role_id roleId,
+				r.role_name roleName,
+				r.removable,
+				r.allocatable,
+				r.description,
+				r.status,
+				r.create_id,
+				r.create_time,
+				r.update_id,
+				r.update_time,
+				(select count(1) from sys_user_role ur,sys_user u where ur.role_id= r.role_id and u.user_id= ur.user_id and u.status !=-1) nums
+		from sys_role r
+		where r.status != -1
+		<if test="roleName != null and roleName != ''">
+	  	and	r.role_name like "%"#{roleName}"%"
+		</if>
+		order by r.update_time desc 
+		limit #{from},#{size}
+	</select>
+	<select id="getListByStatus" parameterType="PageData" resultType="PageData">
+		select  r.role_id roleId,
+				r.role_name roleName,
+				r.removable,
+				r.allocatable,
+				r.description,
+				r.status
+		from sys_role r
+	   where r.status = #{status}
+	</select>
+	
+	<insert id="add" parameterType="PageData" useGeneratedKeys="true" keyProperty="role_id">
+		insert into sys_role (
+			role_name,
+			removable,
+			allocatable,
+			description,
+			status,
+			create_id,
+			create_time,
+			update_id,
+			update_time
+		) values (
+			#{roleName},
+			#{removable},
+			#{allocatable},
+			#{description},
+			#{status},
+			#{createId},
+			#{createTime},
+			#{updateId},
+			#{updateTime}
+		)
+	</insert>
+	
+	<select id="getById" parameterType="Integer" resultType="PageData">
+		select
+			role_id roleId,
+			role_name roleName,
+			removable,
+			allocatable,
+			description,
+			status
+		from sys_role 
+		where status != -1
+		and role_id = #{roleId}
+	</select>
+	
+	<update id="edit" parameterType="PageData">
+		update sys_role set
+			role_name	= #{roleName},
+			removable	= #{removable},
+			allocatable	= #{allocatable},
+			description	= #{description},
+			update_id	= #{updateId},
+			update_time	= #{updateTime}
+		where
+			role_id		= #{roleId}
+	</update>
+	
+	<update id="delete" parameterType="Integer">
+		update sys_role set status = -1 where role_id = #{roleId}
+	</update>
+	
+	<delete id="deleteRoleRes" parameterType="Integer">
+		delete from sys_role_resource where role_id = #{roleId}
+	</delete>
+	
+	<update id="batchDelete" parameterType="java.util.List">
+		update sys_role set status = -1 where role_id in
+		<foreach collection="list" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+	
+	<delete id="batchDeleteRoleRes" parameterType="Integer">
+		delete from sys_role_resource where role_id in
+		<foreach collection="list" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<select id="listResByRoleId" parameterType="Integer" resultType="PageData">
+		select
+			id,
+			role_id roleId,
+			resource_id resourceId,
+			resource_type resourceType
+		from sys_role_resource 
+		where role_id = #{roleId}
+	</select>
+	
+	<select id="listAllRoles" resultType="PageData">
+		select
+			role_id roleId,
+			role_name roleName,
+			description
+		from sys_role
+		where status != -1
+	</select>
+	
+	<delete id="deleteResByRoleId" parameterType="Integer">
+		delete from sys_role_resource where role_id = #{roleId}
+	</delete>
+	
+	<insert id="saveRes" parameterType="java.util.List">
+		insert into sys_role_resource (
+			role_id,
+			resource_id,
+			resource_type
+		) values
+		<foreach collection="list" item="item" index="index" separator="," >
+	        (#{item.roleId},#{item.resourceId},#{item.resourceType})
+	    </foreach>
+	</insert>
+	
+	<select id="listUsernameByRoleId" parameterType="Integer" resultType="String">
+		select distinct u.login_name loginName
+		from sys_user_role ur left join sys_user u on ur.user_id = u.user_id
+		where u.status != -1 and ur.role_id = #{roleId}
+	</select>
+	
+	<select id="listUsernameByRoleIds" parameterType="java.util.List" resultType="String">
+		select distinct u.login_name loginName
+		from sys_user_role ur left join sys_user u on ur.user_id = u.user_id
+		where u.status != -1 and ur.role_id in
+		<foreach collection="list" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+
+	<select id="findRoleNameByUserId" parameterType="java.lang.Long" resultType="PageData">
+		select su.user_id as userId,su.login_name as userName,su.name,sr.role_id as roleId,sr.role_name as roleName from sys_user su
+		join sys_user_role sur on su.user_id=sur.user_id and su.user_id=#{userId}
+		join sys_role sr on sur.role_id=sr.role_id ORDER BY sr.create_time desc limit 0,1
+	</select>
+	
+	<!-- 检查角色重名 -->
+	<select id="checkRoleName" parameterType="PageData" resultType="int">
+		select count(1)
+		from sys_role r
+		where r.status != -1 
+		  and r.role_name=#{roleName}
+		  <if test="roleId != null and roleId != ''">
+			and role_id!=#{roleId}
+		</if>
+	</select>
+	
+	<insert id="saveRoleRes" parameterType="PageData">
+		insert into sys_role_resource (
+			role_id,
+			resource_id,
+			resource_type
+		)
+		values (
+			#{roleId},
+			#{resourceId},
+			#{resourceType}
+		)
+	</insert>
+</mapper>

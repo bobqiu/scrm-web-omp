@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="IndustryMapper">
+	<select id="getIndustrys" parameterType="PageData" resultType="PageData" useCache="false">
+		SELECT
+			*, CASE
+		WHEN parent_id = 0 THEN
+			id
+		ELSE
+			parent_id
+		END classify
+		FROM
+			industry
+		WHERE
+		is_delete = 1
+		<if test="id != null and id != ''">
+		 AND (id = #{id} OR parent_id = #{id}) 
+		</if>
+		ORDER BY
+			classify ASC,
+			`level` ASC
+		LIMIT #{from},#{size}
+	</select>
+	
+	<select id="getFirstLevelIndustrys" parameterType="PageData" resultType="PageData" useCache="false">
+		SELECT id,name FROM industry WHERE parent_id=0 AND is_delete = 1
+	</select>
+	
+	<select id="getIndustryInfo" parameterType="PageData" resultType="PageData" useCache="false">
+		SELECT * FROM industry 
+		WHERE 
+		<if test="name != null and name != ''">
+		name = #{name}
+		</if>
+	</select>
+	
+	<select id="count" parameterType="PageData" resultType="java.lang.Long" useCache="false">
+		SELECT count(id) FROM industry 
+		WHERE
+		is_delete = 1
+		<if test="id != null and id != ''">
+		 AND (id = #{id} OR parent_id = #{id})  
+		</if>
+	</select>
+	
+	<insert id="addIndustry" parameterType="PageData">
+		insert into industry(
+			name,
+			parent_id,
+			level,
+			remark,
+			create_id,
+			create_time
+		)values (
+			#{name},
+			<choose>
+			<when test="parentId != null and parent != ''">
+			#{parentId},
+			</when>
+			<otherwise>
+			0,
+			</otherwise>
+			</choose>
+			#{level},
+			#{remark},
+			#{userId},
+			#{time}
+		)
+	</insert>
+	
+	<update id="editIndustry" parameterType="PageData">
+		update industry set 
+		name = #{name},
+		update_id = #{userId},
+		update_time = #{time}
+		where id = #{id}
+	</update>
+</mapper>

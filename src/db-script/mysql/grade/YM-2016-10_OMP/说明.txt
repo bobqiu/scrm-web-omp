@@ -1,0 +1,2 @@
+DDL：数据库定义，如关键字：create
+DML：数据操纵，如关键字：Insert、delete、update

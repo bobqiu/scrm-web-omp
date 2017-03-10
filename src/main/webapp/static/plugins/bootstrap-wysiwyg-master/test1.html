@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Tiny, opensource, Bootstrap WYSIWYG rich text editor from MindMup</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="opensource rich wysiwyg text editor jquery bootstrap execCommand html5" />
+    <meta name="description" content="This tiny jQuery Bootstrap WYSIWYG plugin turns any DIV into a HTML5 rich text editor" />
+<!--     <link href="external/google-code-prettify/prettify.css" rel="stylesheet"> -->
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-responsive.min.css" rel="stylesheet">
+	<link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
+    <script src="jquery.min.js"></script>
+	<script src="external/jquery.hotkeys.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+<!--     <script src="external/google-code-prettify/prettify.js"></script> -->
+	<link href="index.css" rel="stylesheet">
+    <script src="bootstrap-wysiwyg.js"></script>
+      <style>
+          #editor {overflow:scroll; max-height:300px}
+      </style>
+</head>
+<body>
+<div id="editor"></div>
+<div class="btn-toolbar" data-role="editor-toolbar" data-target="#editor">
+  <a class="btn btn-large" data-edit="bold"><i class="icon-bold"></i></a>
+</div>
+<script>
+    $('#editor').wysiwyg();
+</script>
+</body>
+</html>

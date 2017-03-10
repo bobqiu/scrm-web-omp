@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UserMapper">
+	<sql id="userColumns">login_name,name,password,rights,status,role_id</sql>
+
+	<resultMap type="User" id="userAndRoleResultMap">
+		<id column="user_id" property="userId"/>
+		<result column="login_name" property="loginName"/>
+		<result column="password" property="password"/>
+		<result column="name" property="name"/>
+		<result column="last_login" property="lastLogin"/>
+		<result column="ip" property="ip"/>
+		<result column="status" property="status"/>
+		<result column="skin" property="skin"/>
+		<association property="role" column="roleId" javaType="Role">
+			<id column="role_id" property="roleId"/>
+			<result column="role_name" property="roleName"/>
+			<result column="menu_rights" property="menuRights"/>
+			<result column="button_rights" property="buttonRights"/>
+		</association>
+	</resultMap>
+	
+	<resultMap type="User" id="userResultMap">
+		<id column="user_id" property="userId"/>
+		<result column="login_name" property="loginName"/>
+		<result column="password" property="password"/>
+		<result column="name" property="name"/>
+		<result column="rights" property="rights"/>
+		<result column="last_login" property="lastLogin"/>
+		<result column="ip" property="ip"/>
+		<result column="status" property="status"/>
+		<result column="role_id" property="roleId"/>
+		<result column="skin" property="skin"/>
+	</resultMap>
+	<!-- 
+	判断用户名和密码 
+	<select id="getUserInfo" parameterType="User" resultMap="userResultMap">
+		select * from sys_user 
+		where 1=1
+		<if test="loginName!=null and password!=null">
+		and login_name = #{loginName} and password=#{password}
+		</if>
+		<if test="userId!=null and userId>0">
+		and user_id = #{userId}
+		</if>
+	</select> -->
+	
+	<!-- 判断用户名和密码 -->
+	<select id="getUserInfo" parameterType="PageData" resultType="PageData" useCache="false">
+		select 
+			user_id userId,
+			login_name loginName,
+			password,
+			name,
+			last_login lastLogin,
+			ip,
+			status,
+			skin,
+			email,
+			phone
+		from sys_user 
+		where status != -1
+		<if test="loginName != null and password != null">
+	  	and	(
+	  		(login_name = #{loginName} and password = #{password})
+	  		or
+	  		(email = #{loginName} and password = #{password})
+	  		)
+		</if>
+		<if test="userId != null">
+		and user_id = #{userId}
+		</if>
+	</select>
+	
+	<select id="getByUserId" parameterType="Integer" resultType="PageData">
+		select 
+			user_id userId,
+			login_name loginName,
+			password,
+			name,
+			last_login lastLogin,
+			ip,
+			status,
+			skin,
+			email,
+			phone
+		from sys_user where status != -1
+		and user_id = #{userId}
+	</select>
+	
+	<select id="getByLoginName" parameterType="String" resultType="PageData">
+		select 
+			user_id userId,
+			login_name loginName,
+			password,
+			name,
+			last_login lastLogin,
+			ip,
+			status,
+			skin,
+			email,
+			phone
+		from sys_user where status != -1
+		and login_name = #{loginName}
+	</select>
+	
+	<update id="updatePassword" parameterType="PageData">
+		update sys_user set 
+		password = #{newPwd} 
+		where status != -1 and user_id = #{userId}
+	</update>
+	
+	<update id="updateLastLogin" parameterType="User">
+		update sys_user set 
+		last_login=#{lastLogin} 
+		where user_id=#{userId}
+	</update>
+	
+	<select id="count" parameterType="PageData" resultType="int">
+		select count(1) from sys_user u
+		LEFT join sys_user_role ur on u.user_id = ur.user_id
+		LEFT JOIN sys_role r on r.role_id = ur.role_id
+		where u.status != -1
+		<if test="loginName != null and loginName != ''">
+	  	and	u.login_name like "%"#{loginName}"%"
+		</if>
+		<if test="name != null and name != ''">
+			and	u.name like "%"#{name}"%"
+		</if>
+		<if test="roleId != null and roleId != ''">
+			and r.role_id = #{roleId}
+		</if>
+	</select>
+	
+	<select id="list" parameterType="PageData" resultType="PageData">
+		select
+				u.user_id userId,
+				u.login_name loginName,
+				u.password,
+				u.name,
+				u.last_login lastLogin,
+				u.ip,
+				u.status,
+				u.description,
+				u.email,
+				u.phone,
+				u.skin,
+				r.role_id as roleId,
+		        r.role_name as roleName
+		from sys_user u
+  LEFT join sys_user_role ur on u.user_id = ur.user_id
+  LEFT JOIN sys_role r on r.role_id = ur.role_id
+		where u.status != -1
+		<if test="loginName != null and loginName != ''">
+	  		and	u.login_name like "%"#{loginName}"%"
+		</if>
+		<if test="name != null and name != ''">
+			and	u.name like "%"#{name}"%"
+		</if>
+		<if test="roleId != null and roleId != ''">
+			and r.role_id = #{roleId}
+		</if>
+order by u.last_login DESC,u.user_id
+	 limit #{from},#{size}
+	</select>
+	
+	<insert id="add" parameterType="PageData">
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="userId">
+			SELECT LAST_INSERT_ID() AS id
+		</selectKey>
+		insert into sys_user (
+			login_name,
+			password,
+			name,
+			status,
+			description,
+			email,
+			phone
+		) values (
+			#{loginName},
+			#{password},
+			#{name},
+			#{status},
+			#{description},
+			#{email},
+			#{phone}
+		)
+	</insert>
+	
+	<select id="getById" parameterType="Integer" resultType="PageData">
+		select
+			u.user_id userId,
+			u.login_name loginName,
+			u.password,
+			u.name,
+			u.last_login lastLogin,
+			u.ip,
+			u.status,
+			u.description,
+			u.email,
+			u.phone,
+			u.skin,
+			ur.role_id as roleId
+		from sys_user u
+  LEFT JOIN  sys_user_role ur on ur.user_id = u.user_id
+		where u.status != -1
+		and u.user_id = #{userId}
+	</select>
+	
+	<update id="edit" parameterType="PageData">
+		update sys_user set
+		    <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+			name		= #{name},
+			description	= #{description},
+			email		= #{email},
+			phone		= #{phone}
+		where
+			user_id		= #{userId}
+		    and status != -1
+	</update>
+	
+	<update id="delete" parameterType="Integer">
+		update sys_user set status = -1 where user_id = #{userId}
+	</update>
+	
+	<delete id="deleteUserRole" parameterType="Integer">
+		delete from sys_user_role where user_id = #{userId}
+	</delete>
+	
+	<update id="batchDelete" parameterType="java.util.List">
+		update sys_user set status = -1 where user_id in
+		<foreach collection="list" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+	
+	<delete id="batchDeleteUserRole" parameterType="Integer">
+		delete from sys_user_role where user_id in
+		<foreach collection="list" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<select id="listUserRoleByUserId" parameterType="Integer" resultType="PageData">
+		select
+			id,
+			user_id userId,
+			role_id roleId
+		from sys_user_role
+		where user_id = #{userId}
+	</select>
+	
+	<insert id="saveUserRole" parameterType="java.util.List">
+		insert into sys_user_role (user_id, role_id) values
+		<foreach collection="list" item="item" index="index" separator="," >
+	        (#{item.userId},#{item.roleId})
+	    </foreach>
+	</insert>
+
+	<!--保存用户的单个角色关系 @author liulj 2016-12-5 15:21:32-->
+	<insert id="saveSingleUserRole" parameterType="java.util.List">
+		insert into sys_user_role (user_id, role_id) values
+	        (#{userId},#{roleId})
+	</insert>
+</mapper>

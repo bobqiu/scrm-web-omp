@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="NoticeMapper">
+
+	<sql id="selectBase">
+		SELECT
+		  `id`,
+		  `title`,
+		  `content`,
+		  `send_object` sendObject,
+		  `device_type` deviceType,
+		  `province`,
+		  `city`,
+		  `county`,
+		  `org_id` orgId,
+		  `send_time` sendTime,
+		  `send_status` sendStatus,
+		  `send_channel` sendChannel,
+		  `send_user_id` sendUserId,
+		  `send_username` sendUsername,
+		  `create_time` createTime,
+		  `create_id` createId,
+		  `update_time` updateTime,
+		  `update_id` updateId,
+		  `is_delete` isDelete
+		FROM `notice`
+	</sql>
+
+	<!-- 按条件查询公告列表 -->
+	<select id="queryList" parameterType="net.wildpig.base.common.entity.PageData" resultType="com.youanmi.scrm.omp.dto.om.NoticeDto">
+		<include refid="selectBase"></include>
+		WHERE is_delete = 1
+		<if test="sendChannel !=null">and send_channel = #{sendChannel}</if>
+		<if test="sendStatus !=null and sendStatus!=0">and send_status = #{sendStatus}</if>
+		<if test="sendObject !=null and sendObject!=0">and send_object = #{sendObject}</if>
+		<if test="startSendTime !=null">and send_time <![CDATA[>=]]> #{startSendTime}</if>
+		<if test="endSendTime !=null">and send_time <![CDATA[<=]]> #{endSendTime}</if>
+		order by send_time desc
+		limit ${offset} , ${limit}
+	</select>
+
+	<select id="queryListTotal" parameterType="net.wildpig.base.common.entity.PageData" resultType="java.lang.Integer">
+		select count(1) from `notice`
+		WHERE is_delete = 1
+		<if test="sendChannel !=null">and send_channel = #{sendChannel}</if>
+		<if test="sendStatus !=null and sendStatus!=0">and send_status = #{sendStatus}</if>
+		<if test="sendObject !=null and sendObject!=0">and send_object = #{sendObject}</if>
+		<if test="startSendTimeStr !=null and startSendTimeStr !=''">and send_time <![CDATA[>=]]> #{startSendTime}</if>
+		<if test="endSendTimeStr !=null and endSendTimeStr !=''">and send_time <![CDATA[<=]]> #{endSendTime}</if>
+
+	</select>
+
+	<!-- 按id查单条公告 -->
+	<select id="findById" parameterType="java.lang.Long" resultType="com.youanmi.scrm.omp.dto.om.NoticeDto">
+		<include refid="selectBase"></include>
+		WHERE is_delete = 1 and id = #{id}
+	</select>
+
+	<!-- 修改公告 -->
+	<update id="update" parameterType="com.youanmi.scrm.omp.dto.om.NoticeDto">
+		UPDATE `notice`
+			SET
+			<if test="title !=null">`title` = #{title}, </if>
+			<if test="content !=null">`content` = #{content}, </if>
+			<if test="sendObject !=null">`send_object` = #{sendObject}, </if>
+			<if test="deviceType !=null">`device_type` = #{deviceType}, </if>
+			<if test="province !=null">`province` = #{province}, </if>
+			<if test="city !=null">`city` = #{city}, </if>
+			<if test="county !=null">	`county` = #{county}, </if>
+			<if test="orgId !=null">`org_id` = #{orgId}, </if>
+			<if test="sendTime !=null">`send_time` = #{sendTime}, </if>
+			<if test="sendStatus !=null">`send_status` = #{sendStatus}, </if>
+			<if test="sendChannel !=null">`send_channel` = #{sendChannel}, </if>
+			<if test="sendUserId !=null">`send_user_id` = #{sendUserId}, </if>
+			<if test="sendUsername !=null">`send_username` = #{sendUsername}, </if>
+			<if test="createTime !=null">`create_time` = #{createTime}, </if>
+			<if test="createId !=null">`create_id` = #{createId}, </if>
+			<if test="updateId !=null">`update_id` = #{updateId}, </if>
+			<if test="isDelete !=null">`is_delete` = #{isDelete}, </if>
+			`update_time` = #{updateTime}
+			WHERE `id` = #{id}
+	</update>
+
+	<!-- 添加公告 -->
+	<insert id="save" parameterType="com.youanmi.scrm.omp.dto.om.NoticeDto" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO `notice`
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="title != null">`title`,</if>
+			<if test="content != null">`content`,</if>
+			<if test="sendObject != null">`send_object`,</if>
+			<if test="deviceType != null">`device_type`,</if>
+			<if test="province != null">`province`,</if>
+			<if test="city != null">`city`,</if>
+			<if test="county != null">`county`,</if>
+			<if test="orgId != null">`org_id`,</if>
+			<if test="sendTime != null">`send_time`,</if>
+			<if test="sendStatus != null">`send_status`,</if>
+			<if test="sendChannel != null">`send_channel`,</if>
+			<if test="sendUserId != null">`send_user_id`,</if>
+			<if test="sendUsername != null">`send_username`,</if>
+			<if test="createTime != null">`create_time`,</if>
+			<if test="createId != null">`create_id`,</if>
+			<if test="updateTime != null">`update_time`,</if>
+			<if test="updateId != null">`update_id`,</if>
+			`is_delete`
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="title != null">#{title},</if>
+			<if test="content != null">#{content},</if>
+			<if test="sendObject != null">#{sendObject},</if>
+			<if test="deviceType != null">#{deviceType},</if>
+			<if test="province != null">#{province},</if>
+			<if test="city != null">#{city},</if>
+			<if test="county != null">#{county},</if>
+			<if test="orgId != null">#{orgId},</if>
+			<if test="sendTime != null">#{sendTime},</if>
+			<if test="sendStatus != null">#{sendStatus},</if>
+			<if test="sendChannel != null">#{sendChannel},</if>
+			<if test="sendUserId != null">#{sendUserId},</if>
+			<if test="sendUsername != null">#{sendUsername},</if>
+			<if test="createTime != null">#{createTime},</if>
+			<if test="createId != null">#{createId},</if>
+			<if test="updateTime != null">#{updateTime},</if>
+			<if test="updateId != null">#{updateId},</if>
+			1
+		</trim>
+	</insert>
+
+	<insert id="savePushNoticeOrg" useGeneratedKeys="true" parameterType="com.youanmi.scrm.omp.dto.om.NoticeOrgDto">
+		INSERT INTO `notice_org`
+            (
+             `notice_id`,
+             `org_id`,
+             `create_time`,
+             `create_id`,
+             `is_delete`)
+		values
+		<foreach collection="list" item="item" separator="),(" open="(" close=")">
+			#{item.noticeId},
+			#{item.orgId},
+			#{item.createTime},
+			#{item.createId},
+			1
+		</foreach>
+	</insert>
+
+	<insert id="savePushNoticeUser" parameterType="com.youanmi.scrm.omp.dto.om.NoticeUserDto" useGeneratedKeys="true">
+		INSERT INTO `notice_user`
+					(
+					 `title`,
+					 `notice_id`,
+					 `user_id`,
+					 `imei`,
+					 `org_id`,
+					 `send_time`,
+					 `send_status`,
+					 `create_id`,
+					 `create_time`,
+					 `is_delete`)
+		VALUES
+		<foreach collection="list" item="item" separator="),(" open="(" close=")">
+			#{item.title},
+			#{item.noticeId},
+			#{item.userId},
+			#{item.imei},
+			#{item.orgId},
+			#{item.sendTime},
+			#{item.sendStatus},
+			#{item.createId},
+			#{item.createTime},
+			1
+		</foreach>
+	</insert>
+
+	<update id="updatePushNoticeUserStatus" parameterType="com.youanmi.scrm.omp.dto.om.NoticeUserDto">
+		UPDATE `notice_user`
+		SET
+		<if test="sendStatus != null">`send_status` = #{sendStatus},</if>
+		<if test="isDelete != null">`is_delete` = #{isDelete},</if>
+		  `update_time` = #{updateTime},
+		  `update_id` = #{updateId}
+		WHERE
+		user_id = #{userId}
+		<if test="id != null">and `id` = #{id}</if>
+		<if test="noticeId != null">and `notice_id` = #{noticeId}</if>
+		<if test="id == null and noticeId == null">and 1=2</if>
+	</update>
+
+</mapper>

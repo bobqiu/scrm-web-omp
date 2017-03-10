@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD SQL Map Config 3.0//EN"  
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	
+	<settings> 
+        <setting name="cacheEnabled" value="true" />  
+        <setting name="useGeneratedKeys" value="true" /> 
+        <setting name="defaultExecutorType" value="REUSE" /> 
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+	<typeAliases>
+		<typeAlias type="net.wildpig.base.common.entity.sys.User" alias="User"/>
+		<typeAlias type="net.wildpig.base.common.entity.sys.Role" alias="Role"/>
+		<typeAlias type="net.wildpig.base.common.entity.sys.Menu" alias="Menu"/>
+		<typeAlias type="net.wildpig.base.common.entity.sys.Button" alias="Button"/>
+		<typeAlias type="net.wildpig.base.common.entity.PageData" alias="PageData"/>
+
+	</typeAliases>
+	
+	<plugins>
+
+		
+		<plugin interceptor="net.wildpig.base.common.plugin.MybatisSqlPlugin">
+			<property name="showSql" value="true"/>
+		</plugin>
+	</plugins>
+	
+</configuration>

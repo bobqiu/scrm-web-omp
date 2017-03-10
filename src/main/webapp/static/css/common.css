@@ -1,0 +1,200 @@
+/***********公用样式*************/
+*{
+    margin:0;
+    padding:0;
+    list-style: none;
+    font-family: '微软雅黑';
+}
+a{
+    text-decoration: none!important;
+}
+.hidden{
+    display: none;
+}
+.pageContext{
+    width: 100%;
+}
+.s-modal-open{
+    overflow: auto;
+}
+.form-control:focus{
+    box-shadow: none;
+}
+
+/************form表单样式修改***************/
+.form-horizontal .control-label{
+    text-align:left;
+    width: 80px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+.modal-dialog .form-horizontal .control-label{
+    text-align:right;
+    width: 25%;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.form_datetime .form-control
+{
+    BACKGROUND-COLOR:white;
+}
+.pageContext{
+    padding:0;
+}
+.s-col-sm-1{
+    width: auto;
+    padding: 0;
+}
+.form-horizontal .s-control-label{
+    width: auto;
+}
+.s-col-sm-11{
+    padding-right: 4px;
+    padding-left: 6px;
+    width: 160px;
+
+}
+.row{
+    margin-left: 0px;
+    width: auto;
+    margin-right: 0;
+}
+.s2-col-sm-2{
+    margin-right:0px;
+}
+.s-col-sm-3{
+    width: auto;
+    padding-left: 0;
+    padding-right: 0;
+    margin-right: 10px;
+}
+.s-col-sm-5{
+    padding-left: 4px;
+    padding-right: 4px;
+    width:200px;
+}
+.s-col-sm-6{
+    padding-left:0px;
+    padding-right:0;
+    margin-right:10px;
+    width:auto;
+}
+.s-col-sm-10{
+    padding-left:0px;
+    padding-right:0px;
+    width: 160px;
+    margin-right:10px;
+}
+.h-col-sm-10{
+    padding-left:0px;
+    padding-right:0px;
+    margin-right:10px;
+}
+
+.s-row{
+    margin-top:10px;
+}
+.g-col-gap{
+    width: auto;
+    padding-left: 0;
+    padding-right: 0;
+    margin-right: 20px;
+}
+.g-label{
+    width: auto;
+    padding-left: 0px;
+    padding-right: 6px;
+}
+.g-button{
+    width: auto;
+    padding: 0;
+    margin-left: 20px;
+}
+.g-input{
+    padding-left:0px;
+    padding-right:0px;
+    width: 160px;
+}
+.g-input-time{
+    padding-left: 0px;
+    padding-right: 0px;
+    width:160px;
+}
+.g-label-time{
+    padding-left: 4px;
+    padding-right: 4px;
+    width:auto;
+}
+
+/**********弹出框样式修改**********/
+.s-modal-header{
+    background-color: #f6f6f6;
+    height: 40px;
+    padding: 10px 15px;
+}
+.s-modal-header h4{
+    font-size:15px;
+}
+.s-modal-body{
+    padding-right:0px;
+    padding-left:0px;
+}
+.s-modal-dialog{
+    width:652px;
+}
+.s-form-group{
+    overflow: hidden;
+    padding-left:100px;
+}
+.modal-dialog .form-horizontal .s-control-label{
+    width: 100px;
+    padding-left: 0;
+    padding-right: 0;
+    float: left;
+    margin-right:10px;
+    font-weight: normal;
+}
+.modal-dialog .form-horizontal .s-form-group .s-form-control{
+    float: left;
+    width: 240px;
+}
+.s-modal-body hr{
+    margin: 10px 0px;
+}
+
+/***************左侧菜单样式******************/
+@media screen and (min-width: 1020px) and (max-width: 1240px){/*1024 X 768 处理适配性问题*/
+    .s-content-left{
+        width: 22%;
+    }
+    .s-content-right{
+        width: 78%;
+    }
+    .s-left-order{
+        width:22%!important;
+    }
+}
+.submenu11{
+    margin-bottom: 5px;
+}
+.s-left-order{
+    width: 16.66666667%;
+    float: left;
+    border: 1px solid #fff;
+}
+
+/********************main.jsp样式修改************************/
+.s-container-fluid{
+    height: auto!important;
+}
+
+/***********************底部样式************************/
+.s-footer{
+    height: 45px;
+}
+
+/********************头部样式*****************************/
+.s-nav{
+    height: 50px;
+}
+

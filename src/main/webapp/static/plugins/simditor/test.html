@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+	<meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/simditor.css" />
+
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/module.js"></script>
+	<script type="text/javascript" src="js/uploader.js"></script>
+	<script type="text/javascript" src="js/hotkeys.js"></script>
+	<script type="text/javascript" src="js/simditor.js"></script>
+    <script type="text/javascript" src="js/demo.js"></script>
+
+  </head>
+
+  <body>
+    <textarea id="txt-content" data-autosave="editor-content" autofocus required></textarea>
+  </body>
+<script>
+(function() {
+    $(function() {
+        var $preview, editor, toolbar;
+        Simditor.locale = 'zh-CN';
+        toolbar = ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment'];
+        editor = new Simditor({
+            textarea: $('#txt-content'),
+            placeholder: '这里输入文字...',
+            toolbar: toolbar,
+            pasteImage: true,
+            upload: location.search === '?upload' ? {
+                url: '/upload'
+            } : false
+        });
+        $preview = $('#preview');
+        if ($preview.length > 0) {
+            return editor.on('valuechanged', function(e) {
+                return $preview.html(editor.getValue());
+            });
+        }
+    });
+}).call(this);
+</script>
+</html>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	  http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	
+	<!-- ================ Shiro start ================ -->
+		<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+			<property name="realm" ref="ShiroRealm" />
+		</bean>
+		
+		<!--Realm -->
+		<bean id="ShiroRealm" class="net.wildpig.base.controller.interceptor.shiro.ShiroRealm" ></bean>
+	
+		<!-- rights -->
+		<bean id="rts" class="net.wildpig.base.controller.filter.shiro.RightsFilter"></bean>
+	
+		<!-- Shiro Filter -->
+		<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+			<property name="securityManager" ref="securityManager" />
+			<property name="loginUrl" value="/" />
+			<property name="successUrl" value="/main" />
+			<property name="unauthorizedUrl" value="/login_toLogin" />
+ 			<property name="filters">
+				<map>
+					<entry key="rts" value-ref="rts" />
+				</map>
+			</property>
+			<property name="filterChainDefinitions">
+				<value>
+				/static/** 		= anon
+	           	/code 			= anon
+	           	/login_login    = anon
+	           	/logout     	= anon
+	           	/user/editPwd	= anon
+	           	/sys/index      = anon
+	           	/**				= rts
+				</value>
+			</property>
+		</bean>
+	<!-- ================ Shiro end ================ -->
+	
+</beans>
